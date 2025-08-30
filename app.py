@@ -25,9 +25,9 @@ fetch("https://ipapi.co/json/")
 
 # --- Read location from query parameters ---
 def get_location():
-    query_params = st.experimental_get_query_params()
-    region = query_params.get("region", ["Unknown"])[0]
-    country = query_params.get("country", ["Unknown"])[0]
+    query_params = st.query_params
+    region = query_params.get("region", "Unknown")
+    country = query_params.get("country", "Unknown")
     return region, country
 
 region, country = get_location()
