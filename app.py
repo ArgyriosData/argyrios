@@ -1,9 +1,10 @@
 import streamlit as st
 import streamlit.components.v1 as components
 
-# 🔹 Replace with your GA4 Measurement ID
+# 🔹 Your GA4 Measurement ID
 GA_TRACKING_ID = "G-RZZMRJV9JP"
 
+# 🔹 Minimal GA tracking script
 GA_JS = f"""
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id={GA_TRACKING_ID}"></script>
@@ -12,23 +13,15 @@ GA_JS = f"""
   function gtag(){{dataLayer.push(arguments);}}
   gtag('js', new Date());
   gtag('config', '{GA_TRACKING_ID}');
-
-  // 🔹 Send a custom test event when the app loads
-  gtag('event', 'streamlit_test_event', {{
-    'event_category': 'debug',
-    'event_label': 'GA script loaded successfully',
-    'value': 1
-  }});
 </script>
 """
 
-# Inject GA tracking script
+# Inject the script into Streamlit
 components.html(GA_JS, height=0, width=0)
 
-# Minimal app UI
-st.title("GA4 Test App")
-st.write("👋 Hello! If GA is working, you should see a `streamlit_test_event` in DebugView.")
-
+# Minimal app content
+st.title("My Streamlit App")
+st.write("If GA is set up correctly, this page view should appear in GA4 Realtime.")
 
 
 # import streamlit as st
