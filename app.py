@@ -37,10 +37,12 @@ now_local = now_utc.astimezone(local_tz)
 duration = now_local - session_start_local
 duration_str = str(timedelta(seconds=int(duration.total_seconds())))
 
-# --- Log to Google Sheets ---
+# --- Log to Google Sheets (silent fail) ---
 try:
-    creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"],
-        scopes=["https://www.googleapis.com/auth/spreadsheets"])
+    creds = Credentials.from_service_account_info(
+        st.secrets["gcp_service_account"],
+        scopes=["https://www.googleapis.com/auth/spreadsheets"]
+    )
     client = gspread.authorize(creds)
     sheet = client.open("VisitorLog").sheet1
 
@@ -51,8 +53,8 @@ try:
         str(is_creator),
         anon_id
     ])
-except Exception as e:
-    st.warning("⚠️ Could not log to Google Sheets.")
+except Exception:
+    pass  # Silently ignore any logging errors
 
 # --- Header ---
 st.title("AG")
@@ -65,7 +67,7 @@ with col2:
 
 # --- About ---
 st.markdown("""
-Welcome to **home**, your partner in intelligent decision-making.
+Welcome to **home**, your partner in intelligent decision-making.  
 We specialize in delivering tailored machine learning solutions for businesses ready to evolve.
 """)
 
@@ -90,6 +92,7 @@ st.video("https://youtu.be/G0kOefuPZqk?si=Fan_FtZytbZQqM1z")
 # --- Footer ---
 st.markdown("---")
 st.caption("© 2025 Argyrios Georgiadis. All rights reserved.")
+
 
 # import streamlit as st
 # import streamlit_analytics2 as streamlit_analytics
