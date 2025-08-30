@@ -3,34 +3,17 @@ import requests
 import gspread
 from google.oauth2.service_account import Credentials
 from datetime import datetime, timedelta
-import streamlit.components.v1 as components
 
-# --- Inject JavaScript to get real visitor location ---
-components.html("""
-<script>
-fetch("https://ipapi.co/json/")
-  .then(response => response.json())
-  .then(data => {
-    const region = data.region;
-    const country = data.country_name;
-    const params = new URLSearchParams(window.location.search);
-    if (!params.has("region")) {
-      params.set("region", region);
-      params.set("country", country);
-      window.location.search = params.toString();
-    }
-});
-</script>
-""", height=0)
+# --- Get visitor country using ipapi.co ---
+def get_country():
+    try:
+        response = requests.get("https://ipapi.co/json/")
+        data = response.json()
+        return data.get("country_name", "Unknown")
+    except:
+        return "Unknown"
 
-# --- Read location from query parameters ---
-def get_location():
-    query_params = st.query_params
-    region = query_params.get("region", "Unknown")
-    country = query_params.get("country", "Unknown")
-    return region, country
-
-region, country = get_location()
+country = get_country()
 
 # --- Authenticate with Google Sheets using secrets ---
 scope = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
@@ -53,12 +36,11 @@ session_end = now
 duration = session_end - session_start
 duration_str = str(timedelta(seconds=int(duration.total_seconds())))
 
-# --- Log only if location is available and not already logged ---
+# --- Log only once per session ---
 if "logged" not in st.session_state:
-    if region != "Unknown" and country != "Unknown":
-        row = [date_str, time_str, region, country, session_start.strftime("%H:%M:%S"), session_end.strftime("%H:%M:%S"), duration_str]
-        sheet.append_row(row)
-        st.session_state.logged = True
+    row = [date_str, time_str, country, session_start.strftime("%H:%M:%S"), session_end.strftime("%H:%M:%S"), duration_str]
+    sheet.append_row(row)
+    st.session_state.logged = True
 
 # --- Your App Content ---
 st.set_page_config(page_title="AG", page_icon="📈", layout="centered")
