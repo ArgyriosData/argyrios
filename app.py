@@ -5,7 +5,6 @@ import gspread
 from google.oauth2.service_account import Credentials
 import random
 import string
-import streamlit.components.v1 as components
 
 # --- Timezone ---
 local_tz = pytz.timezone("Europe/Athens")
@@ -13,31 +12,11 @@ local_tz = pytz.timezone("Europe/Athens")
 st.set_page_config(page_title="Minimal Tracker", page_icon="📊", layout="centered")
 st.title("📊 Minimal Visitor Tracker")
 
-# --- Inject JavaScript to get country from viewer's IP ---
-components.html("""
-<script>
-(async function() {
-  const res = await fetch("https://ipapi.co/json/");
-  const data = await res.json();
-  const country = data.country_name || "Unknown";
-  const params = new URLSearchParams(window.location.search);
-  if (!params.has("country")) {
-    params.set("country", country);
-    window.location.search = params.toString();
-  }
-})();
-</script>
-""", height=0)
-
 # --- Detect if it's you ---
 query = st.query_params
 me_raw = query.get("me", "false")
 me_value = me_raw[0] if isinstance(me_raw, list) else me_raw
 is_creator = me_value.strip().lower() == "true"
-
-# --- Get country from query param ---
-country_raw = query.get("country", "Unknown")
-country = country_raw[0] if isinstance(country_raw, list) else country_raw
 
 # --- Generate anonymous ID (store in session) ---
 if "anon_id" not in st.session_state:
@@ -65,7 +44,6 @@ st.markdown(f"**Current time:** {now_local.strftime('%Y-%m-%d %H:%M:%S')} (EEST)
 st.markdown(f"**Session duration:** {duration_str}")
 st.markdown(f"**Page views this session:** {st.session_state.views}")
 st.markdown(f"**Anonymous ID:** `{anon_id}`")
-st.markdown(f"**Country (from viewer):** {country}")
 
 if is_creator:
     st.success("👑 This session is marked as yours (Argyrios)")
@@ -84,8 +62,7 @@ try:
         duration_str,
         st.session_state.views,
         str(is_creator),
-        anon_id,
-        country
+        anon_id
     ])
 except Exception as e:
     st.warning("⚠️ Could not log to Google Sheets.")
