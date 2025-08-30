@@ -10,6 +10,8 @@ st.title("📊 Minimal Visitor Tracker")
 
 # --- Detect if it's you (via query param) ---
 query = st.query_params
+st.write("Query params:", query)  # 👈 Debug line to show what's being passed
+
 me_param = query.get("me", ["false"])
 is_creator = len(me_param) > 0 and me_param[0].strip().lower() == "true"
 
