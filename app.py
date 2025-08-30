@@ -1,38 +1,35 @@
-from flask import Flask, request, render_template_string
-import requests
+import streamlit as st
+from datetime import datetime, timedelta
 
-app = Flask(__name__)
+st.set_page_config(page_title="Minimal Tracker", page_icon="📊", layout="centered")
+st.title("📊 Minimal Visitor Tracker")
 
-@app.route("/")
-def index():
-    # Get visitor's IP address
-    ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+# --- Detect if it's you (via query param) ---
+is_creator = st.query_params.get("me", "false").lower() == "true"
 
-    # Fetch location from IP
-    try:
-        response = requests.get(f"https://ipapi.co/{ip}/json/")
-        data = response.json()
-        city = data.get("city", "Unknown")
-        region = data.get("region", "Unknown")
-        country = data.get("country_name", "Unknown")
-    except:
-        city, region, country = "Unknown", "Unknown", "Unknown"
+# --- Track session start ---
+if "session_start" not in st.session_state:
+    st.session_state.session_start = datetime.now()
 
-    # Display result
-    html = f"""
-    <h1>🌍 Location Detection</h1>
-    <p><strong>IP:</strong> {ip}</p>
-    <p><strong>City:</strong> {city}</p>
-    <p><strong>Region:</strong> {region}</p>
-    <p><strong>Country:</strong> {country}</p>
-    <hr>
-    <p>This is a test version. No data is logged.</p>
-    """
-    return render_template_string(html)
+# --- Count page views ---
+st.session_state.views = st.session_state.get("views", 0) + 1
 
-if __name__ == "__main__":
-    app.run(debug=True)
+# --- Calculate duration ---
+now = datetime.now()
+duration = now - st.session_state.session_start
+duration_str = str(timedelta(seconds=int(duration.total_seconds())))
 
+# --- Display tracking info ---
+st.markdown(f"**Session started:** {st.session_state.session_start.strftime('%Y-%m-%d %H:%M:%S')}")
+st.markdown(f"**Current time:** {now.strftime('%Y-%m-%d %H:%M:%S')}")
+st.markdown(f"**Session duration:** {duration_str}")
+st.markdown(f"**Page views this session:** {st.session_state.views}")
+
+# --- Mark if it's you ---
+if is_creator:
+    st.success("👑 This session is marked as yours (Argyrios)")
+else:
+    st.info("🧍 Visitor session")
 
 # import streamlit as st
 # import streamlit_analytics2 as streamlit_analytics
