@@ -12,7 +12,7 @@ st.subheader("Coming Soon, Ignore this till you stop seeing this text :P")
 #     st.image("logo.jpg", caption="Argyrios — ML Consultant", width=250)
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
-    st.image("argyrios.jpg", caption="Argyrios — ML Consultant")
+    st.image("logo_AC.jpg", caption="Argyrios — ML Consultant")
 
 # About
 st.markdown("""
