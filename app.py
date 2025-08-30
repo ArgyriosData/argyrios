@@ -31,6 +31,9 @@ def get_location():
     return region, country
 
 region, country = get_location()
+# --- Wait until location is available ---
+if region == "Unknown" or country == "Unknown":
+    st.stop()
 
 # --- Authenticate with Google Sheets using secrets ---
 scope = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
