@@ -11,7 +11,7 @@ st.title("📊 Minimal Visitor Tracker")
 # --- Detect if it's you (via query param) ---
 query = st.query_params
 me_param = query.get("me", ["false"])
-is_creator = me_param[0].lower() == "true"
+is_creator = len(me_param) > 0 and me_param[0].strip().lower() == "true"
 
 # --- Track session start ---
 if "session_start" not in st.session_state:
@@ -38,6 +38,7 @@ if is_creator:
     st.success("👑 This session is marked as yours (Argyrios)")
 else:
     st.info("🧍 Visitor session")
+
 
 # import streamlit as st
 # import streamlit_analytics2 as streamlit_analytics
