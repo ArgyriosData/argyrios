@@ -3,4 +3,5 @@ streamlit
 gspread
 google-auth
 requests
+streamlit-js-eval
 
