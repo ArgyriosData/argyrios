@@ -1,15 +1,22 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
-st.markdown("""
+GA_TRACKING_ID = "G-RZZMRJV9JP"  # 👈 your GA measurement ID
+
+GA_JS = f"""
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-RZZMRJV9JP"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id={GA_TRACKING_ID}"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
+  function gtag(){{dataLayer.push(arguments);}}
   gtag('js', new Date());
-  gtag('config', 'G-RZZMRJV9JP');
+  gtag('config', '{GA_TRACKING_ID}');
 </script>
-""", unsafe_allow_html=True)
+"""
+
+# This makes sure the script is injected and executed
+components.html(GA_JS, height=0, width=0)
+
 
 # Page config
 st.set_page_config(page_title="AG", page_icon="📈", layout="centered")
