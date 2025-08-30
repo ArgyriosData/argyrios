@@ -3,6 +3,34 @@ import requests
 import gspread
 from google.oauth2.service_account import Credentials
 from datetime import datetime, timedelta
+import streamlit.components.v1 as components
+
+# --- Inject JavaScript to get real visitor location ---
+components.html("""
+<script>
+fetch("https://ipapi.co/json/")
+  .then(response => response.json())
+  .then(data => {
+    const region = data.region;
+    const country = data.country_name;
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has("region")) {
+      params.set("region", region);
+      params.set("country", country);
+      window.location.search = params.toString();
+    }
+});
+</script>
+""", height=0)
+
+# --- Read location from query parameters ---
+def get_location():
+    query_params = st.experimental_get_query_params()
+    region = query_params.get("region", ["Unknown"])[0]
+    country = query_params.get("country", ["Unknown"])[0]
+    return region, country
+
+region, country = get_location()
 
 # --- Authenticate with Google Sheets using secrets ---
 scope = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
@@ -11,19 +39,6 @@ client = gspread.authorize(creds)
 
 # --- Connect to your sheet ---
 sheet = client.open_by_key("1QUyD9X4jEPkiLt--5oj8QIP7MGv0GGA0Nbr2ZUvXwsw").sheet1
-
-# --- Get visitor region using ipapi.co ---
-def get_location():
-    try:
-        response = requests.get("https://ipapi.co/json/")
-        data = response.json()
-        region = data.get("region", "Unknown")  # e.g. "Central Macedonia"
-        country = data.get("country_name", "Unknown")  # e.g. "Greece"
-        return region, country
-    except:
-        return "Unknown", "Unknown"
-
-region, country = get_location()
 
 # --- Track session timing ---
 now = datetime.now()
@@ -59,8 +74,8 @@ We specialize in delivering tailored machine learning solutions for businesses r
 st.markdown("### Services Offered")
 st.markdown("""
 - 📊 Predictive Modeling  
-- 🧹 no 
-- 🧠 no
+- 🧹 no  
+- 🧠 no  
 - 🎓no  
 """)
 
@@ -72,7 +87,6 @@ st.markdown("""
 st.video("https://youtu.be/G0kOefuPZqk?si=Fan_FtZytbZQqM1z")
 st.markdown("---")
 st.caption("© 2025 Argyrios Georgiadis. All rights reserved.")
-
 
 
 
