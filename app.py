@@ -31,9 +31,23 @@ def get_location():
     return region, country
 
 region, country = get_location()
-# --- Wait until location is available ---
-if region == "Unknown" or country == "Unknown":
-    st.stop()
+# --- Track session timing ---
+now = datetime.now()
+date_str = now.strftime("%Y-%m-%d")
+time_str = now.strftime("%H:%M:%S")
+
+if "session_start" not in st.session_state:
+    st.session_state.session_start = now
+
+session_start = st.session_state.session_start
+session_end = now
+duration = session_end - session_start
+duration_str = str(timedelta(seconds=int(duration.total_seconds())))
+
+# --- Log only if location is available ---
+if region != "Unknown" and country != "Unknown":
+    row = [date_str, time_str, region, country, session_start.strftime("%H:%M:%S"), session_end.strftime("%H:%M:%S"), duration_str]
+    sheet.append_row(row)
 
 # --- Authenticate with Google Sheets using secrets ---
 scope = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
