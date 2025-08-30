@@ -9,7 +9,8 @@ st.set_page_config(page_title="Minimal Tracker", page_icon="📊", layout="cente
 st.title("📊 Minimal Visitor Tracker")
 
 # --- Detect if it's you (via query param) ---
-is_creator = st.query_params.get("me", "false").lower() == "true"
+query = st.query_params
+is_creator = query.get("me", ["false"])[0].lower() == "true"
 
 # --- Track session start ---
 if "session_start" not in st.session_state:
