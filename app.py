@@ -1,22 +1,22 @@
 import streamlit as st
 
 # Page config
-st.set_page_config(page_title="Strera", page_icon="🧠", layout="centered")
+st.set_page_config(page_title="AG", page_icon="📈", layout="centered")
 
 # Header
-st.title("Strera")
-st.subheader("Machine Learning Consultancy")
+st.title("AG")
+st.subheader("Coming Soon, Ignore this till you stop seeing this text :P")
 
 # col1, col2, col3 = st.columns([1, 2, 1])
 # with col2:
-#     st.image("argyrios.jpg", caption="Argyrios — ML Consultant", width=250)
+#     st.image("logo.jpg", caption="Argyrios — ML Consultant", width=250)
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     st.image("argyrios.jpg", caption="Argyrios — ML Consultant")
 
 # About
 st.markdown("""
-Welcome to **Strera**, your partner in intelligent decision-making.
+Welcome to **home**, your partner in intelligent decision-making.
 We specialize in delivering tailored machine learning solutions for businesses ready to evolve.
 """)
 
@@ -24,9 +24,9 @@ We specialize in delivering tailored machine learning solutions for businesses r
 st.markdown("### Services Offered")
 st.markdown("""
 - 📊 Predictive Modeling  
-- 🧹 Data Cleaning & Feature Engineering  
-- 🧠 Model Auditing & Optimization  
-- 🎓 ML Training & Workshops  
+- 🧹 no 
+- 🧠 no
+- 🎓no  
 """)
 
 # Contact
@@ -40,4 +40,4 @@ st.video("https://youtu.be/G0kOefuPZqk?si=Fan_FtZytbZQqM1z")
 
 # Footer
 st.markdown("---")
-st.caption("© 2025 Strera. All rights reserved.")
+st.caption("© 2025 Argyrios Georgiadis. All rights reserved.")
