@@ -3,34 +3,6 @@ import requests
 import gspread
 from google.oauth2.service_account import Credentials
 from datetime import datetime, timedelta
-import streamlit.components.v1 as components
-
-# --- Inject JavaScript to get IP-based location from browser ---
-components.html("""
-<script>
-fetch("https://ipapi.co/json/")
-  .then(response => response.json())
-  .then(data => {
-    const region = data.region;
-    const country = data.country_name;
-    const params = new URLSearchParams(window.location.search);
-    if (!params.has("region")) {
-      params.set("region", region);
-      params.set("country", country);
-      window.location.search = params.toString();
-    }
-});
-</script>
-""", height=0)
-
-# --- Read location from query parameters ---
-def get_location():
-    query = st.query_params
-    region = query.get("region", "Unknown")
-    country = query.get("country", "Unknown")
-    return region, country
-
-region, country = get_location()
 
 # --- Authenticate with Google Sheets using secrets ---
 scope = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
@@ -52,6 +24,35 @@ session_start = st.session_state.session_start
 session_end = now
 duration = session_end - session_start
 duration_str = str(timedelta(seconds=int(duration.total_seconds())))
+
+# --- Receive location from form submission ---
+st.markdown("""
+<form id="locationForm" method="POST">
+  <input type="hidden" name="region" id="regionInput">
+  <input type="hidden" name="country" id="countryInput">
+</form>
+
+<script>
+fetch("https://ipapi.co/json/")
+  .then(response => response.json())
+  .then(data => {
+    document.getElementById("regionInput").value = data.region;
+    document.getElementById("countryInput").value = data.country_name;
+    document.getElementById("locationForm").submit();
+});
+</script>
+""", unsafe_allow_html=True)
+
+# --- Read submitted location ---
+region = st.session_state.get("region", "Unknown")
+country = st.session_state.get("country", "Unknown")
+
+# --- Capture form data on POST ---
+if st.request.method == "POST":
+    region = st.request.form.get("region", "Unknown")
+    country = st.request.form.get("country", "Unknown")
+    st.session_state.region = region
+    st.session_state.country = country
 
 # --- Log only once per session if location is known ---
 if "logged" not in st.session_state and region != "Unknown" and country != "Unknown":
@@ -89,6 +90,7 @@ st.markdown("""
 st.video("https://youtu.be/G0kOefuPZqk?si=Fan_FtZytbZQqM1z")
 st.markdown("---")
 st.caption("© 2025 Argyrios Georgiadis. All rights reserved.")
+
 
 
 # import streamlit as st
