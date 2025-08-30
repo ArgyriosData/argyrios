@@ -4,27 +4,23 @@ from streamlit_js_eval import streamlit_js_eval
 st.set_page_config(page_title="Location Test", page_icon="🌍", layout="centered")
 st.title("🌍 Location Detection Test")
 
-# --- Fetch location from browser using JS ---
+# --- Run JS to fetch location ---
 location_data = streamlit_js_eval(
-    js_expressions="await (await fetch('https://ipapi.co/json/')).json()",
-    key="get_location"
+    js_expressions="(await fetch('https://ipapi.co/json/')).region + '|' + (await fetch('https://ipapi.co/json/')).country_name",
+    key="location_key"
 )
 
-# --- Display location ---
+# --- Display result ---
 if location_data:
-    region = location_data.get("region", "Unknown")
-    country = location_data.get("country_name", "Unknown")
-    city = location_data.get("city", "Unknown")
-    
-    st.success("✅ Location detected!")
-    st.markdown(f"**City:** {city}")
-    st.markdown(f"**Region:** {region}")
-    st.markdown(f"**Country:** {country}")
+    try:
+        region, country = location_data.split("|")
+        st.success("✅ Location detected!")
+        st.markdown(f"**Region:** {region}")
+        st.markdown(f"**Country:** {country}")
+    except:
+        st.error("⚠️ Failed to parse location data.")
 else:
     st.warning("⏳ Detecting location...")
-
-st.markdown("---")
-st.caption("This is a test version. No data is logged.")
 
 
 
