@@ -1,5 +1,20 @@
 import streamlit as st
 
+import streamlit.components.v1 as components
+
+GA_TRACKING_ID = "G-RZZMRJV9JP"  # Your actual ID
+
+components.html(f"""
+<script async src="https://www.googletagmanager.com/gtag/js?id={GA_TRACKING_ID}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){{dataLayer.push(arguments);}}
+  gtag('js', new Date());
+  gtag('config', '{GA_TRACKING_ID}');
+</script>
+""", height=0)
+
+
 # Page config
 st.set_page_config(page_title="AG", page_icon="📈", layout="centered")
 
