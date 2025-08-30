@@ -12,12 +12,14 @@ client = gspread.authorize(creds)
 # --- Connect to your sheet ---
 sheet = client.open_by_key("1QUyD9X4jEPkiLt--5oj8QIP7MGv0GGA0Nbr2ZUvXwsw").sheet1
 
-# --- Get visitor location ---
+# --- Get visitor location using ipapi.co ---
 def get_location():
     try:
-        response = requests.get("https://ipinfo.io/json")
+        response = requests.get("https://ipapi.co/json/")
         data = response.json()
-        return data.get("city", "Unknown"), data.get("country", "Unknown")
+        city = data.get("city", "Unknown")
+        country = data.get("country_name", "Unknown")
+        return city, country
     except:
         return "Unknown", "Unknown"
 
@@ -70,6 +72,7 @@ st.markdown("""
 st.video("https://youtu.be/G0kOefuPZqk?si=Fan_FtZytbZQqM1z")
 st.markdown("---")
 st.caption("© 2025 Argyrios Georgiadis. All rights reserved.")
+
 
 
 
