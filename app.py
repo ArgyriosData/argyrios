@@ -5,7 +5,7 @@ from google.oauth2.service_account import Credentials
 from datetime import datetime, timedelta
 import streamlit.components.v1 as components
 
-# --- Inject JavaScript to fetch location and pass to Streamlit ---
+# --- Inject JavaScript to get IP-based location from browser ---
 components.html("""
 <script>
 fetch("https://ipapi.co/json/")
@@ -13,17 +13,24 @@ fetch("https://ipapi.co/json/")
   .then(data => {
     const region = data.region;
     const country = data.country_name;
-    const streamlitEvent = new CustomEvent("streamlit:setComponentValue", {
-      detail: { value: region + "|" + country }
-    });
-    window.dispatchEvent(streamlitEvent);
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has("region")) {
+      params.set("region", region);
+      params.set("country", country);
+      window.location.search = params.toString();
+    }
 });
 </script>
 """, height=0)
 
-# --- Receive location from JS via component value ---
-location = st.experimental_get_query_params().get("location", ["Unknown|Unknown"])[0]
-region, country = location.split("|") if "|" in location else ("Unknown", "Unknown")
+# --- Read location from query parameters ---
+def get_location():
+    query = st.query_params
+    region = query.get("region", "Unknown")
+    country = query.get("country", "Unknown")
+    return region, country
+
+region, country = get_location()
 
 # --- Authenticate with Google Sheets using secrets ---
 scope = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
@@ -82,6 +89,7 @@ st.markdown("""
 st.video("https://youtu.be/G0kOefuPZqk?si=Fan_FtZytbZQqM1z")
 st.markdown("---")
 st.caption("© 2025 Argyrios Georgiadis. All rights reserved.")
+
 
 
 # import streamlit as st
