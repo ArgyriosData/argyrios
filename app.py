@@ -38,40 +38,39 @@ duration = now_local - session_start_local
 duration_str = str(timedelta(seconds=int(duration.total_seconds())))
 
 # --- Log to Google Sheets (silent fail) ---
-try:
-    creds = Credentials.from_service_account_info(
-        st.secrets["gcp_service_account"],
-        scopes=["https://www.googleapis.com/auth/spreadsheets"]
-    )
-    client = gspread.authorize(creds)
-    sheet = client.open("VisitorLog").sheet1
+def log_to_sheet():
+    try:
+        creds = Credentials.from_service_account_info(
+            st.secrets["google_sheets"],
+            scopes=["https://www.googleapis.com/auth/spreadsheets"]
+        )
+        client = gspread.authorize(creds)
+        sheet = client.open_by_key("1QUyD9X4jEPkiLt--5oj8QIP7MGv0GGA0Nbr2ZUvXwsw").worksheet("Sheet1")
+        sheet.append_row([
+            now_local.strftime('%Y-%m-%d %H:%M:%S'),
+            duration_str,
+            st.session_state.views,
+            str(is_creator),
+            anon_id
+        ])
+    except:
+        pass  # Silently ignore any logging errors
 
-    sheet.append_row([
-        now_local.strftime('%Y-%m-%d %H:%M:%S'),
-        duration_str,
-        st.session_state.views,
-        str(is_creator),
-        anon_id
-    ])
-except Exception:
-    pass  # Silently ignore any logging errors
+log_to_sheet()
 
-# --- Header ---
+# --- UI ---
 st.title("AG")
 st.subheader("Coming Soon, Ignore this till you stop seeing this text :P")
 
-# --- Logo ---
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     st.image("logo_AC.jpg", caption="Argyrios — ML Consultant")
 
-# --- About ---
 st.markdown("""
 Welcome to **home**, your partner in intelligent decision-making.  
 We specialize in delivering tailored machine learning solutions for businesses ready to evolve.
 """)
 
-# --- Services ---
 st.markdown("### Services Offered")
 st.markdown("""
 - 📊 Predictive Modeling  
@@ -80,16 +79,13 @@ st.markdown("""
 - 🎓 no  
 """)
 
-# --- Contact ---
 st.markdown("""
 📬 Interested in working together?  
 [Reach out privately](mailto:georgiadis.argyrios@gmail.com?subject=ML%20Consultancy%20Inquiry)
 """)
 
-# --- Video ---
 st.video("https://youtu.be/G0kOefuPZqk?si=Fan_FtZytbZQqM1z")
 
-# --- Footer ---
 st.markdown("---")
 st.caption("© 2025 Argyrios Georgiadis. All rights reserved.")
 
