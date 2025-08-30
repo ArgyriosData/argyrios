@@ -62,7 +62,34 @@ if "logged" not in st.session_state and region != "Unknown" and country != "Unkn
 # --- Your App Content ---
 st.set_page_config(page_title="AG", page_icon="📈", layout="centered")
 st.title("AG")
-st.subheader("Coming Soon, Ignore
+st.subheader("Coming Soon, Ignore this till you stop seeing this text :P")
+
+col1, col2, col3 = st.columns([1, 2, 1])
+with col2:
+    st.image("logo_AC.jpg", caption="Argyrios — ML Consultant")
+
+st.markdown("""
+Welcome to **home**, your partner in intelligent decision-making.
+We specialize in delivering tailored machine learning solutions for businesses ready to evolve.
+""")
+
+st.markdown("### Services Offered")
+st.markdown("""
+- 📊 Predictive Modeling  
+- 🧹 no  
+- 🧠 no  
+- 🎓no  
+""")
+
+st.markdown("""
+📬 Interested in working together?  
+[Reach out privately](mailto:georgiadis.argyrios@gmail.com?subject=ML%20Consultancy%20Inquiry)
+""")
+
+st.video("https://youtu.be/G0kOefuPZqk?si=Fan_FtZytbZQqM1z")
+st.markdown("---")
+st.caption("© 2025 Argyrios Georgiadis. All rights reserved.")
+
 
 # import streamlit as st
 # import streamlit_analytics2 as streamlit_analytics
