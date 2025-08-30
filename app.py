@@ -31,25 +31,6 @@ navigator.geolocation.getCurrentPosition(
 </script>
 """, height=0)
 
-# --- Get lat/lon from query params ---
-def get_location():
-    query = st.query_params
-    lat = query.get("lat", "Unknown")
-    lon = query.get("lon", "Unknown")
-
-    if lat == "Unknown" or lon == "Unknown":
-        return "Unknown"
-
-    # Reverse geocode to get country
-    try:
-        response = requests.get(f"https://ipapi.co/{lat},{lon}/json/")
-        data = response.json()
-        return data.get("country_name", "Unknown")
-    except:
-        return "Unknown"
-
-country = get_location()
-
 # --- Authenticate with Google Sheets using secrets ---
 scope = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
 creds = Credentials.from_service_account_info(st.secrets["google_sheets"], scopes=scope)
@@ -71,11 +52,24 @@ session_end = now
 duration = session_end - session_start
 duration_str = str(timedelta(seconds=int(duration.total_seconds())))
 
+# --- Get lat/lon from query params ---
+query = st.query_params
+lat = query.get("lat", None)
+lon = query.get("lon", None)
+
 # --- Log only once per session if location is known ---
-if "logged" not in st.session_state and country != "Unknown":
-    row = [date_str, time_str, country, session_start.strftime("%H:%M:%S"), session_end.strftime("%H:%M:%S"), duration_str]
-    sheet.append_row(row)
-    st.session_state.logged = True
+if lat and lon and "logged" not in st.session_state:
+    try:
+        response = requests.get(f"https://ipapi.co/{lat},{lon}/json/")
+        data = response.json()
+        country = data.get("country_name", "Unknown")
+
+        if country != "Unknown":
+            row = [date_str, time_str, country, session_start.strftime("%H:%M:%S"), session_end.strftime("%H:%M:%S"), duration_str]
+            sheet.append_row(row)
+            st.session_state.logged = True
+    except:
+        pass
 
 # --- Your App Content ---
 st.set_page_config(page_title="AG", page_icon="📈", layout="centered")
@@ -107,6 +101,7 @@ st.markdown("""
 st.video("https://youtu.be/G0kOefuPZqk?si=Fan_FtZytbZQqM1z")
 st.markdown("---")
 st.caption("© 2025 Argyrios Georgiadis. All rights reserved.")
+
 
 
 # import streamlit as st
