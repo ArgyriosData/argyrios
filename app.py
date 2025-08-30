@@ -50,23 +50,22 @@ if is_creator:
 else:
     st.info("🧍 Visitor session")
 
-# --- Log to Google Sheets (after first view to ensure stability) ---
-if st.session_state.views > 1:
-    try:
-        creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"],
-            scopes=["https://www.googleapis.com/auth/spreadsheets"])
-        client = gspread.authorize(creds)
-        sheet = client.open("VisitorLog").sheet1
+# --- Log to Google Sheets ---
+try:
+    creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"],
+        scopes=["https://www.googleapis.com/auth/spreadsheets"])
+    client = gspread.authorize(creds)
+    sheet = client.open("VisitorLog").sheet1
 
-        sheet.append_row([
-            now_local.strftime('%Y-%m-%d %H:%M:%S'),
-            duration_str,
-            st.session_state.views,
-            str(is_creator),
-            anon_id
-        ])
-    except Exception as e:
-        st.warning("⚠️ Could not log to Google Sheets.")
+    sheet.append_row([
+        now_local.strftime('%Y-%m-%d %H:%M:%S'),
+        duration_str,
+        st.session_state.views,
+        str(is_creator),
+        anon_id
+    ])
+except Exception as e:
+    st.warning("⚠️ Could not log to Google Sheets.")
 
 
 # import streamlit as st
