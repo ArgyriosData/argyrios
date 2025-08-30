@@ -12,18 +12,18 @@ client = gspread.authorize(creds)
 # --- Connect to your sheet ---
 sheet = client.open_by_key("1QUyD9X4jEPkiLt--5oj8QIP7MGv0GGA0Nbr2ZUvXwsw").sheet1
 
-# --- Get visitor location using ipapi.co ---
+# --- Get visitor region using ipapi.co ---
 def get_location():
     try:
         response = requests.get("https://ipapi.co/json/")
         data = response.json()
-        city = data.get("city", "Unknown")
-        country = data.get("country_name", "Unknown")
-        return city, country
+        region = data.get("region", "Unknown")  # e.g. "Central Macedonia"
+        country = data.get("country_name", "Unknown")  # e.g. "Greece"
+        return region, country
     except:
         return "Unknown", "Unknown"
 
-city, country = get_location()
+region, country = get_location()
 
 # --- Track session timing ---
 now = datetime.now()
@@ -39,7 +39,7 @@ duration = session_end - session_start
 duration_str = str(timedelta(seconds=int(duration.total_seconds())))
 
 # --- Log to Google Sheets ---
-row = [date_str, time_str, city, country, session_start.strftime("%H:%M:%S"), session_end.strftime("%H:%M:%S"), duration_str]
+row = [date_str, time_str, region, country, session_start.strftime("%H:%M:%S"), session_end.strftime("%H:%M:%S"), duration_str]
 sheet.append_row(row)
 
 # --- Your App Content ---
@@ -72,7 +72,6 @@ st.markdown("""
 st.video("https://youtu.be/G0kOefuPZqk?si=Fan_FtZytbZQqM1z")
 st.markdown("---")
 st.caption("© 2025 Argyrios Georgiadis. All rights reserved.")
-
 
 
 
