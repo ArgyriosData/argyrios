@@ -1,5 +1,9 @@
 import streamlit as st
 from datetime import datetime, timedelta
+import pytz
+
+# --- Set your local timezone ---
+local_tz = pytz.timezone("Europe/Athens")
 
 st.set_page_config(page_title="Minimal Tracker", page_icon="📊", layout="centered")
 st.title("📊 Minimal Visitor Tracker")
@@ -9,19 +13,21 @@ is_creator = st.query_params.get("me", "false").lower() == "true"
 
 # --- Track session start ---
 if "session_start" not in st.session_state:
-    st.session_state.session_start = datetime.now()
+    st.session_state.session_start = datetime.now(pytz.utc)
 
 # --- Count page views ---
 st.session_state.views = st.session_state.get("views", 0) + 1
 
 # --- Calculate duration ---
-now = datetime.now()
-duration = now - st.session_state.session_start
+now_utc = datetime.now(pytz.utc)
+session_start_local = st.session_state.session_start.astimezone(local_tz)
+now_local = now_utc.astimezone(local_tz)
+duration = now_local - session_start_local
 duration_str = str(timedelta(seconds=int(duration.total_seconds())))
 
 # --- Display tracking info ---
-st.markdown(f"**Session started:** {st.session_state.session_start.strftime('%Y-%m-%d %H:%M:%S')}")
-st.markdown(f"**Current time:** {now.strftime('%Y-%m-%d %H:%M:%S')}")
+st.markdown(f"**Session started:** {session_start_local.strftime('%Y-%m-%d %H:%M:%S')} (EEST)")
+st.markdown(f"**Current time:** {now_local.strftime('%Y-%m-%d %H:%M:%S')} (EEST)")
 st.markdown(f"**Session duration:** {duration_str}")
 st.markdown(f"**Page views this session:** {st.session_state.views}")
 
@@ -30,6 +36,7 @@ if is_creator:
     st.success("👑 This session is marked as yours (Argyrios)")
 else:
     st.info("🧍 Visitor session")
+
 
 # import streamlit as st
 # import streamlit_analytics2 as streamlit_analytics
