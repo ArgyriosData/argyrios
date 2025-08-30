@@ -31,23 +31,6 @@ def get_location():
     return region, country
 
 region, country = get_location()
-# --- Track session timing ---
-now = datetime.now()
-date_str = now.strftime("%Y-%m-%d")
-time_str = now.strftime("%H:%M:%S")
-
-if "session_start" not in st.session_state:
-    st.session_state.session_start = now
-
-session_start = st.session_state.session_start
-session_end = now
-duration = session_end - session_start
-duration_str = str(timedelta(seconds=int(duration.total_seconds())))
-
-# --- Log only if location is available ---
-if region != "Unknown" and country != "Unknown":
-    row = [date_str, time_str, region, country, session_start.strftime("%H:%M:%S"), session_end.strftime("%H:%M:%S"), duration_str]
-    sheet.append_row(row)
 
 # --- Authenticate with Google Sheets using secrets ---
 scope = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
@@ -70,9 +53,12 @@ session_end = now
 duration = session_end - session_start
 duration_str = str(timedelta(seconds=int(duration.total_seconds())))
 
-# --- Log to Google Sheets ---
-row = [date_str, time_str, region, country, session_start.strftime("%H:%M:%S"), session_end.strftime("%H:%M:%S"), duration_str]
-sheet.append_row(row)
+# --- Log only if location is available and not already logged ---
+if "logged" not in st.session_state:
+    if region != "Unknown" and country != "Unknown":
+        row = [date_str, time_str, region, country, session_start.strftime("%H:%M:%S"), session_end.strftime("%H:%M:%S"), duration_str]
+        sheet.append_row(row)
+        st.session_state.logged = True
 
 # --- Your App Content ---
 st.set_page_config(page_title="AG", page_icon="📈", layout="centered")
@@ -104,7 +90,6 @@ st.markdown("""
 st.video("https://youtu.be/G0kOefuPZqk?si=Fan_FtZytbZQqM1z")
 st.markdown("---")
 st.caption("© 2025 Argyrios Georgiadis. All rights reserved.")
-
 
 
 # import streamlit as st
