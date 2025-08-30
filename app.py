@@ -12,6 +12,14 @@ local_tz = pytz.timezone("Europe/Athens")
 # --- Page config ---
 st.set_page_config(page_title="AG", page_icon="📈", layout="centered")
 
+import streamlit.components.v1 as components
+
+components.html("""
+<script data-goatcounter="https://argyrios.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+""", height=0)
+
+
 # --- Detect if it's you ---
 query = st.query_params
 me_raw = query.get("me", "false")
