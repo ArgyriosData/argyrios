@@ -3,6 +3,27 @@ import requests
 import gspread
 from google.oauth2.service_account import Credentials
 from datetime import datetime, timedelta
+import streamlit.components.v1 as components
+
+# --- Inject JavaScript to fetch location and pass to Streamlit ---
+components.html("""
+<script>
+fetch("https://ipapi.co/json/")
+  .then(response => response.json())
+  .then(data => {
+    const region = data.region;
+    const country = data.country_name;
+    const streamlitEvent = new CustomEvent("streamlit:setComponentValue", {
+      detail: { value: region + "|" + country }
+    });
+    window.dispatchEvent(streamlitEvent);
+});
+</script>
+""", height=0)
+
+# --- Receive location from JS via component value ---
+location = st.experimental_get_query_params().get("location", ["Unknown|Unknown"])[0]
+region, country = location.split("|") if "|" in location else ("Unknown", "Unknown")
 
 # --- Authenticate with Google Sheets using secrets ---
 scope = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
@@ -24,35 +45,6 @@ session_start = st.session_state.session_start
 session_end = now
 duration = session_end - session_start
 duration_str = str(timedelta(seconds=int(duration.total_seconds())))
-
-# --- Receive location from form submission ---
-st.markdown("""
-<form id="locationForm" method="POST">
-  <input type="hidden" name="region" id="regionInput">
-  <input type="hidden" name="country" id="countryInput">
-</form>
-
-<script>
-fetch("https://ipapi.co/json/")
-  .then(response => response.json())
-  .then(data => {
-    document.getElementById("regionInput").value = data.region;
-    document.getElementById("countryInput").value = data.country_name;
-    document.getElementById("locationForm").submit();
-});
-</script>
-""", unsafe_allow_html=True)
-
-# --- Read submitted location ---
-region = st.session_state.get("region", "Unknown")
-country = st.session_state.get("country", "Unknown")
-
-# --- Capture form data on POST ---
-if st.request.method == "POST":
-    region = st.request.form.get("region", "Unknown")
-    country = st.request.form.get("country", "Unknown")
-    st.session_state.region = region
-    st.session_state.country = country
 
 # --- Log only once per session if location is known ---
 if "logged" not in st.session_state and region != "Unknown" and country != "Unknown":
@@ -90,7 +82,6 @@ st.markdown("""
 st.video("https://youtu.be/G0kOefuPZqk?si=Fan_FtZytbZQqM1z")
 st.markdown("---")
 st.caption("© 2025 Argyrios Georgiadis. All rights reserved.")
-
 
 
 # import streamlit as st
