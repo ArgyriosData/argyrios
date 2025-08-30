@@ -1,27 +1,37 @@
-import streamlit as st
-from streamlit_js_eval import streamlit_js_eval
+from flask import Flask, request, render_template_string
+import requests
 
-st.set_page_config(page_title="Location Test", page_icon="🌍", layout="centered")
-st.title("🌍 Location Detection Test")
+app = Flask(__name__)
 
-# --- Run JS to fetch location ---
-location_data = streamlit_js_eval(
-    js_expressions="(await fetch('https://ipapi.co/json/')).region + '|' + (await fetch('https://ipapi.co/json/')).country_name",
-    key="location_key"
-)
+@app.route("/")
+def index():
+    # Get visitor's IP address
+    ip = request.headers.get('X-Forwarded-For', request.remote_addr)
 
-# --- Display result ---
-if location_data:
+    # Fetch location from IP
     try:
-        region, country = location_data.split("|")
-        st.success("✅ Location detected!")
-        st.markdown(f"**Region:** {region}")
-        st.markdown(f"**Country:** {country}")
+        response = requests.get(f"https://ipapi.co/{ip}/json/")
+        data = response.json()
+        city = data.get("city", "Unknown")
+        region = data.get("region", "Unknown")
+        country = data.get("country_name", "Unknown")
     except:
-        st.error("⚠️ Failed to parse location data.")
-else:
-    st.warning("⏳ Detecting location...")
+        city, region, country = "Unknown", "Unknown", "Unknown"
 
+    # Display result
+    html = f"""
+    <h1>🌍 Location Detection</h1>
+    <p><strong>IP:</strong> {ip}</p>
+    <p><strong>City:</strong> {city}</p>
+    <p><strong>Region:</strong> {region}</p>
+    <p><strong>Country:</strong> {country}</p>
+    <hr>
+    <p>This is a test version. No data is logged.</p>
+    """
+    return render_template_string(html)
+
+if __name__ == "__main__":
+    app.run(debug=True)
 
 
 # import streamlit as st
