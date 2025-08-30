@@ -1,4 +1,6 @@
-streamlit>=1.30.0
 streamlit-analytics2
-
+streamlit
+gspread
+google-auth
+requests
 
