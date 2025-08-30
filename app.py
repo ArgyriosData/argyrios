@@ -3,17 +3,52 @@ import requests
 import gspread
 from google.oauth2.service_account import Credentials
 from datetime import datetime, timedelta
+import streamlit.components.v1 as components
 
-# --- Get visitor country using ipapi.co ---
-def get_country():
+# --- Inject JavaScript to get GPS location with permission ---
+components.html("""
+<script>
+navigator.geolocation.getCurrentPosition(
+  function(position) {
+    const lat = position.coords.latitude;
+    const lon = position.coords.longitude;
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has("lat")) {
+      params.set("lat", lat);
+      params.set("lon", lon);
+      window.location.search = params.toString();
+    }
+  },
+  function(error) {
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has("lat")) {
+      params.set("lat", "Unknown");
+      params.set("lon", "Unknown");
+      window.location.search = params.toString();
+    }
+  }
+);
+</script>
+""", height=0)
+
+# --- Get lat/lon from query params ---
+def get_location():
+    query = st.query_params
+    lat = query.get("lat", "Unknown")
+    lon = query.get("lon", "Unknown")
+
+    if lat == "Unknown" or lon == "Unknown":
+        return "Unknown"
+
+    # Reverse geocode to get country
     try:
-        response = requests.get("https://ipapi.co/json/")
+        response = requests.get(f"https://ipapi.co/{lat},{lon}/json/")
         data = response.json()
         return data.get("country_name", "Unknown")
     except:
         return "Unknown"
 
-country = get_country()
+country = get_location()
 
 # --- Authenticate with Google Sheets using secrets ---
 scope = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
@@ -36,8 +71,8 @@ session_end = now
 duration = session_end - session_start
 duration_str = str(timedelta(seconds=int(duration.total_seconds())))
 
-# --- Log only once per session ---
-if "logged" not in st.session_state:
+# --- Log only once per session if location is known ---
+if "logged" not in st.session_state and country != "Unknown":
     row = [date_str, time_str, country, session_start.strftime("%H:%M:%S"), session_end.strftime("%H:%M:%S"), duration_str]
     sheet.append_row(row)
     st.session_state.logged = True
