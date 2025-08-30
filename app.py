@@ -1,24 +1,49 @@
 import streamlit as st
 from datetime import datetime, timedelta
 import pytz
+import gspread
+from google.oauth2.service_account import Credentials
+import random
+import string
+import streamlit.components.v1 as components
 
-# --- Set your local timezone ---
+# --- Timezone ---
 local_tz = pytz.timezone("Europe/Athens")
 
 st.set_page_config(page_title="Minimal Tracker", page_icon="📊", layout="centered")
 st.title("📊 Minimal Visitor Tracker")
 
-# --- Detect if it's you (via query param) ---
+# --- Inject JavaScript to get country from viewer's IP ---
+components.html("""
+<script>
+(async function() {
+  const res = await fetch("https://ipapi.co/json/");
+  const data = await res.json();
+  const country = data.country_name || "Unknown";
+  const params = new URLSearchParams(window.location.search);
+  if (!params.has("country")) {
+    params.set("country", country);
+    window.location.search = params.toString();
+  }
+})();
+</script>
+""", height=0)
+
+# --- Detect if it's you ---
 query = st.query_params
 me_raw = query.get("me", "false")
-
-# Handle both string and list formats
-if isinstance(me_raw, list):
-    me_value = me_raw[0]
-else:
-    me_value = me_raw
-
+me_value = me_raw[0] if isinstance(me_raw, list) else me_raw
 is_creator = me_value.strip().lower() == "true"
+
+# --- Get country from query param ---
+country_raw = query.get("country", "Unknown")
+country = country_raw[0] if isinstance(country_raw, list) else country_raw
+
+# --- Generate anonymous ID (store in session) ---
+if "anon_id" not in st.session_state:
+    st.session_state.anon_id = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+
+anon_id = st.session_state.anon_id
 
 # --- Track session start ---
 if "session_start" not in st.session_state:
@@ -34,17 +59,36 @@ now_local = now_utc.astimezone(local_tz)
 duration = now_local - session_start_local
 duration_str = str(timedelta(seconds=int(duration.total_seconds())))
 
-# --- Display tracking info ---
+# --- Display info ---
 st.markdown(f"**Session started:** {session_start_local.strftime('%Y-%m-%d %H:%M:%S')} (EEST)")
 st.markdown(f"**Current time:** {now_local.strftime('%Y-%m-%d %H:%M:%S')} (EEST)")
 st.markdown(f"**Session duration:** {duration_str}")
 st.markdown(f"**Page views this session:** {st.session_state.views}")
+st.markdown(f"**Anonymous ID:** `{anon_id}`")
+st.markdown(f"**Country (from viewer):** {country}")
 
-# --- Mark if it's you ---
 if is_creator:
     st.success("👑 This session is marked as yours (Argyrios)")
 else:
     st.info("🧍 Visitor session")
+
+# --- Log to Google Sheets ---
+try:
+    creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"],
+        scopes=["https://www.googleapis.com/auth/spreadsheets"])
+    client = gspread.authorize(creds)
+    sheet = client.open("VisitorLog").sheet1
+
+    sheet.append_row([
+        now_local.strftime('%Y-%m-%d %H:%M:%S'),
+        duration_str,
+        st.session_state.views,
+        str(is_creator),
+        anon_id,
+        country
+    ])
+except Exception as e:
+    st.warning("⚠️ Could not log to Google Sheets.")
 
 
 # import streamlit as st
