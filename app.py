@@ -4,44 +4,44 @@ import pytz
 import gspread
 from google.oauth2.service_account import Credentials
 
-# --- Timezone ---
-local_tz = pytz.timezone("Europe/Athens")
+# # --- Timezone ---
+# local_tz = pytz.timezone("Europe/Athens")
 
-# --- Page config ---
-st.set_page_config(page_title="AG", page_icon="📈", layout="centered")
+# # --- Page config ---
+# st.set_page_config(page_title="AG", page_icon="📈", layout="centered")
 
-# --- Track session start ---
-if "session_start" not in st.session_state:
-    st.session_state.session_start = datetime.now(pytz.utc)
+# # --- Track session start ---
+# if "session_start" not in st.session_state:
+#     st.session_state.session_start = datetime.now(pytz.utc)
 
-# --- Count page views ---
-st.session_state.views = st.session_state.get("views", 0) + 1
+# # --- Count page views ---
+# st.session_state.views = st.session_state.get("views", 0) + 1
 
-# --- Calculate duration ---
-now_utc = datetime.now(pytz.utc)
-session_start_local = st.session_state.session_start.astimezone(local_tz)
-now_local = now_utc.astimezone(local_tz)
-duration = now_local - session_start_local
-duration_str = str(timedelta(seconds=int(duration.total_seconds())))
+# # --- Calculate duration ---
+# now_utc = datetime.now(pytz.utc)
+# session_start_local = st.session_state.session_start.astimezone(local_tz)
+# now_local = now_utc.astimezone(local_tz)
+# duration = now_local - session_start_local
+# duration_str = str(timedelta(seconds=int(duration.total_seconds())))
 
-# --- Log to Google Sheets (silent fail) ---
-def log_to_sheet():
-    try:
-        creds = Credentials.from_service_account_info(
-            st.secrets["google_sheets"],
-            scopes=["https://www.googleapis.com/auth/spreadsheets"]
-        )
-        client = gspread.authorize(creds)
-        sheet = client.open_by_key("1QUyD9X4jEPkiLt--5oj8QIP7MGv0GGA0Nbr2ZUvXwsw").worksheet("Sheet1")
-        sheet.append_row([
-            now_local.strftime('%Y-%m-%d %H:%M:%S'),
-            duration_str,
-            st.session_state.views
-        ])
-    except:
-        pass  # Silently ignore any logging errors
+# # --- Log to Google Sheets (silent fail) ---
+# def log_to_sheet():
+#     try:
+#         creds = Credentials.from_service_account_info(
+#             st.secrets["google_sheets"],
+#             scopes=["https://www.googleapis.com/auth/spreadsheets"]
+#         )
+#         client = gspread.authorize(creds)
+#         sheet = client.open_by_key("1QUyD9X4jEPkiLt--5oj8QIP7MGv0GGA0Nbr2ZUvXwsw").worksheet("Sheet1")
+#         sheet.append_row([
+#             now_local.strftime('%Y-%m-%d %H:%M:%S'),
+#             duration_str,
+#             st.session_state.views
+#         ])
+#     except:
+#         pass  # Silently ignore any logging errors
 
-log_to_sheet()
+# log_to_sheet()
 
 # --- UI ---
 st.title("AG")
@@ -69,7 +69,7 @@ st.markdown("""
 [Reach out privately](mailto:georgiadis.argyrios@gmail.com?subject=ML%20Consultancy%20Inquiry)
 """)
 
-st.video("https://youtu.be/G0kOefuPZqk?si=Fan_FtZytbZQqM1z")
+st.video("https://youtu.be/j_YugmZPIfk")
 
 st.markdown("---")
 st.caption("© 2025 Argyrios Georgiadis. All rights reserved.")
