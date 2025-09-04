@@ -69,6 +69,16 @@ st.markdown("""
 [Reach out privately](mailto:georgiadis.argyrios@gmail.com?subject=ML%20Consultancy%20Inquiry)
 """)
 
+with open("CV.pdf", "rb") as f:
+    pdf_bytes = f.read()
+
+st.download_button(
+    label="Download CV",
+    data=pdf_bytes,
+    file_name="CV.pdf",
+    mime="application/pdf"
+)
+
 st.video("https://youtu.be/j_YugmZPIfk")
 
 st.markdown("---")
