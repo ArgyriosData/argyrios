@@ -1,9 +1,4 @@
 import streamlit as st
-# from datetime import datetime, timedelta
-# import pytz
-# import gspread
-# from google.oauth2.service_account import Credentials
-
 
 # --- UI ---
 st.title("Argyrios Georgiadis, PhD")
@@ -49,6 +44,11 @@ st.markdown("""
   Data Scientist, Freelance (May 2022 – Dec 2022) 
 
 
+""")
+
+st.markdown("""
+🤝 I'm open to collaborations, freelance projects, and exploratory calls.  
+If you're working with user-level data and want to understand behavior, build predictive models, or improve targeting—I can help.
 """)
 
 
