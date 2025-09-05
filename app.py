@@ -69,8 +69,14 @@ st.download_button(
 
 st.video("https://youtu.be/j_YugmZPIfk")
 
+st.markdown("""
+Thanks for visiting—looking forward to connecting.
+""")
+
 st.markdown("---")
 st.caption("© 2025 Argyrios Georgiadis. All rights reserved.")
+
+
 
 
 
