@@ -22,7 +22,7 @@ st.markdown("""
 
 - Specialized in behavioral modeling & predictive analytics
 
-- Proven impact in gaming: models that boost marketing and revenue
+- Created models that improved revenue and guided marketing teams in their spending decisions.
 
 - Creative thinker with a background in photography
 
