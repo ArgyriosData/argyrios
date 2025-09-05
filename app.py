@@ -4,44 +4,6 @@ import pytz
 import gspread
 from google.oauth2.service_account import Credentials
 
-# # --- Timezone ---
-# local_tz = pytz.timezone("Europe/Athens")
-
-# # --- Page config ---
-# st.set_page_config(page_title="AG", page_icon="📈", layout="centered")
-
-# # --- Track session start ---
-# if "session_start" not in st.session_state:
-#     st.session_state.session_start = datetime.now(pytz.utc)
-
-# # --- Count page views ---
-# st.session_state.views = st.session_state.get("views", 0) + 1
-
-# # --- Calculate duration ---
-# now_utc = datetime.now(pytz.utc)
-# session_start_local = st.session_state.session_start.astimezone(local_tz)
-# now_local = now_utc.astimezone(local_tz)
-# duration = now_local - session_start_local
-# duration_str = str(timedelta(seconds=int(duration.total_seconds())))
-
-# # --- Log to Google Sheets (silent fail) ---
-# def log_to_sheet():
-#     try:
-#         creds = Credentials.from_service_account_info(
-#             st.secrets["google_sheets"],
-#             scopes=["https://www.googleapis.com/auth/spreadsheets"]
-#         )
-#         client = gspread.authorize(creds)
-#         sheet = client.open_by_key("1QUyD9X4jEPkiLt--5oj8QIP7MGv0GGA0Nbr2ZUvXwsw").worksheet("Sheet1")
-#         sheet.append_row([
-#             now_local.strftime('%Y-%m-%d %H:%M:%S'),
-#             duration_str,
-#             st.session_state.views
-#         ])
-#     except:
-#         pass  # Silently ignore any logging errors
-
-# log_to_sheet()
 
 # --- UI ---
 st.title("Argyrios Georgiadis, PhD")
@@ -52,7 +14,7 @@ with col2:
     st.image("logo_AC.jpg", caption="Argyrios — ML Consultant")
 
 st.markdown("""
-👤 Profile
+## 👤 Profile
 - Data Scientist with a PhD in Physics
 
 - 3.5+ years of industry experience in machine learning
@@ -64,6 +26,26 @@ st.markdown("""
 - Creative thinker with a background in photography
 
 - Skilled at visualizing and communicating insights clearly
+
+## Education 
+- PhD in Physics – University of Surrey (funded by AkzoNobel)  
+
+- BSc in Physics – Aristotle University of Thessaloniki  
+
+- Self-taught in data science, data analytics and machine learning  
+
+- BA in Photography – Open College of the Arts  
+
+- PGCert in Therapeutic Photography – Robert Gordon University
+
+## Relevant Work Experience 
+- Fumb Games – London, UK (Remote)
+  Data Scientist, Freelance (Feb 2022 – Present)
+
+- Carma Project – California, USA (Remote)
+  Data Scientist, Freelance (May 2022 – Dec 2022) 
+
+
 """)
 
 st.markdown("### Services Offered")
