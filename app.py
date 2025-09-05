@@ -1,8 +1,8 @@
 import streamlit as st
-from datetime import datetime, timedelta
-import pytz
-import gspread
-from google.oauth2.service_account import Credentials
+# from datetime import datetime, timedelta
+# import pytz
+# import gspread
+# from google.oauth2.service_account import Credentials
 
 
 # --- UI ---
@@ -11,7 +11,8 @@ st.subheader("ML Specialist in Gaming & Beyond | Physics PhD | Freelance Project
 
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
-    st.image("logo_AC.jpg", caption="Argyrios — ML Consultant")
+    st.image("logo_AC.jpg" )
+    # , caption="Argyrios — ML Consultant")
 
 st.markdown("""
 ## 👤 Profile
