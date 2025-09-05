@@ -53,17 +53,17 @@ with col2:
 
 st.markdown("""
 👤 Profile
-Data Scientist with a PhD in Physics
+- Data Scientist with a PhD in Physics
 
-3.5+ years of industry experience in machine learning
+- 3.5+ years of industry experience in machine learning
 
-Specialized in behavioral modeling & predictive analytics
+- Specialized in behavioral modeling & predictive analytics
 
-Proven impact in gaming: models that boost marketing and revenue
+- Proven impact in gaming: models that boost marketing and revenue
 
-Creative thinker with a background in photography
+- Creative thinker with a background in photography
 
-Skilled at visualizing and communicating insights clearly
+- Skilled at visualizing and communicating insights clearly
 """)
 
 st.markdown("### Services Offered")
