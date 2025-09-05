@@ -44,16 +44,26 @@ from google.oauth2.service_account import Credentials
 # log_to_sheet()
 
 # --- UI ---
-st.title("AG")
-st.subheader("Coming Soon, Ignore this till you stop seeing this text :P")
+st.title("Argyrios Georgiadis, PhD")
+st.subheader("ML Specialist in Gaming & Beyond | Physics PhD | Freelance Projects | Photographer (BA, PgCert)")
 
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     st.image("logo_AC.jpg", caption="Argyrios — ML Consultant")
 
 st.markdown("""
-Welcome to **home**, your partner in intelligent decision-making.  
-We specialize in delivering tailored machine learning solutions for businesses ready to evolve.
+👤 Profile
+Data Scientist with a PhD in Physics
+
+3.5+ years of industry experience in machine learning
+
+Specialized in behavioral modeling & predictive analytics
+
+Proven impact in gaming: models that boost marketing and revenue
+
+Creative thinker with a background in photography
+
+Skilled at visualizing and communicating insights clearly
 """)
 
 st.markdown("### Services Offered")
