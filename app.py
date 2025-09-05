@@ -40,10 +40,12 @@ st.markdown("""
 - PGCert in Therapeutic Photography – Robert Gordon University
 
 ## Relevant Work Experience 
-- Fumb Games – London, UK (Remote)
+- Fumb Games – London, UK (Remote) 
+
   Data Scientist, Freelance (Feb 2022 – Present)
 
 - Carma Project – California, USA (Remote)
+
   Data Scientist, Freelance (May 2022 – Dec 2022) 
 
 
