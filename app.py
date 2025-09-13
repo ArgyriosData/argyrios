@@ -52,6 +52,14 @@ If you're working with user-level data and want to understand behavior, build pr
 """)
 
 
+linkedin_url = "https://www.linkedin.com/in/argyrios/"
+linkedin_icon = "https://cdn-icons-png.flaticon.com/512/174/174857.png"  # Public LinkedIn icon
+
+st.markdown(
+    f'<a href="{linkedin_url}" target="_blank"><img src="{linkedin_icon}" width="30" height="30"></a>',
+    unsafe_allow_html=True
+)
+
 st.markdown("""
 📬 Interested in working together?  
 [Email](mailto:georgiadis.argyrios@gmail.com?subject=ML%20Consultancy%20Inquiry)
